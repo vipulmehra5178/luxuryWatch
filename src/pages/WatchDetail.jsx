@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { getWatchById } from "../server/api";
 import { useCart } from "../context/CartContext";
 
 const WatchDetail = () => {
   const { id } = useParams();   
-  const { addToCart } = useCart();
-
   const [watch, setWatch] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [quantity, setQuantity] = useState(1);
   const [error, setError] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const navigate = useNavigate();
+  const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchWatchDetails = async () => {
       try {
         const data = await getWatchById(id);  
+        console.log(data);
         setWatch(data);
       } catch (err) {
         setError(err.message);
@@ -30,21 +31,18 @@ const WatchDetail = () => {
   }, [id]);   
 
   const handleAddToCart = () => {
-    if (!watch) return;
-
     const cartItem = {
       id: watch._id,   
       title: watch.title,
       price: watch.price,
-      image: watch.images?.[0],
-      quantity,
-      shippingCharge: watch.shipping?.charges || 0,
+      image: watch.images[0],
+      quantity: quantity,
+      shippingCharge: watch.shipping.charges,
       totalPrice:
-        watch.price * quantity +
-        (watch.shipping?.charges || 0),
+        watch.price * quantity + watch.shipping.charges,
     };
 
-    addToCart(cartItem);
+    addToCart(cartItem, quantity);
     alert("Added to cart successfully!");
   };
 
@@ -53,43 +51,42 @@ const WatchDetail = () => {
   if (!watch) return <div>Watch not found</div>;
 
   return (
-    <div style={{ padding: "40px" }}>
-      <h1>{watch.title}</h1>
+    <div style={{ padding: "40px 20px", maxWidth: "1200px", margin: "0 auto" }}>
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "40px" }}>
+        <div className="watch-images" style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+          {watch.images.map((image, index) => (
+            <img
+              key={index}
+              src={image}
+              alt={`${watch.title} - View ${index + 1}`}
+              style={{ width: "100%", height: "auto", borderRadius: "8px" }}
+            />
+          ))}
+        </div>
 
-      <img
-        src={watch.images?.[0]}
-        alt={watch.title}
-        style={{ width: "400px", borderRadius: "10px" }}
-      />
+        <div className="watch-info" style={{ backgroundColor: "#fff", padding: "30px", borderRadius: "12px", boxShadow: "0 4px 15px rgba(0,0,0,0.1)" }}>
+          <h1 style={{ fontSize: "2.5rem", marginBottom: "20px", color: "#1a1a1a" }}>{watch.title}</h1>
 
-      <h2>₹{watch.price}</h2>
+          <h2 style={{ fontSize: "2rem", color: "#2c2c2c" }}>₹{watch.price}</h2>
 
-      {watch.discount > 0 && (
-        <p>{watch.discount}% OFF</p>
-      )}
-
-      <p><strong>Brand:</strong> {watch.brand}</p>
-      <p>{watch.description}</p>
-
-      <div>
-        <button onClick={() => setQuantity(prev => Math.max(1, prev - 1))}>-</button>
-        <span style={{ margin: "0 10px" }}>{quantity}</span>
-        <button onClick={() => setQuantity(prev => prev + 1)}>+</button>
+          <button
+            onClick={handleAddToCart}
+            style={{
+              backgroundColor: "#007bff",
+              color: "white",
+              padding: "12px 24px",
+              border: "none",
+              borderRadius: "6px",
+              fontSize: "1.1rem",
+              cursor: "pointer",
+              width: "100%",
+              marginTop: "20px"
+            }}
+          >
+            Add to Cart
+          </button>
+        </div>
       </div>
-
-      <button
-        onClick={handleAddToCart}
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          background: "#007bff",
-          color: "#fff",
-          border: "none",
-          borderRadius: "6px"
-        }}
-      >
-        Add to Cart
-      </button>
     </div>
   );
 };
