@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { getWatchById } from "../server/api";
 import { useCart } from '../context/CartContext';
 
@@ -9,14 +9,12 @@ const WatchDetail = () => {
   const [error, setError] = useState(null);
   const { id } = useParams();
   const [quantity, setQuantity] = useState(1);
-  const navigate = useNavigate();
   const { addToCart } = useCart();
 
   useEffect(() => {
     const fetchWatchDetails = async () => {
       try {
         const data = await getWatchById(id);
-        console.log(data);
         setWatch(data);
       } catch (err) {
         setError(err.message);
@@ -30,7 +28,7 @@ const WatchDetail = () => {
 
   const handleAddToCart = () => {
     const cartItem = {
-      id: watch._id,  
+      id: watch._id,
       title: watch.title,
       price: watch.price,
       image: watch.images[0],
@@ -46,6 +44,7 @@ const WatchDetail = () => {
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (!watch) return <div>Watch not found</div>;
+
 
   return (
     <div style={{ padding: "40px 20px", maxWidth: "1200px", margin: "0 auto" }}>
