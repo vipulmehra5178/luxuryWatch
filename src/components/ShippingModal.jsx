@@ -31,40 +31,6 @@ const ShippingModal = ({ isOpen, onClose }) => {
     return subtotal + shippingTotal;
   };
 
-  // const initiatePayment = async (orderId) => {
-  //   try {
-  //     const response = await fetch('http://localhost:3001/api/initiate-payment', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({
-  //         orderId,
-  //         amount: calculateTotal(),
-  //         customerDetails: {
-  //           name: formData.name,
-  //           email: formData.email,
-  //           phone: formData.phone
-  //         }
-  //       })
-  //     });
-
-  //     const data = await response.json();
-  //     if (data.success) {
-  //       localStorage.setItem('paymentDetails', JSON.stringify({
-  //         orderId: data.orderId,
-  //         amount: data.amount
-  //       }));
-  //       return true;
-  //     } else {
-  //       throw new Error(data.error || 'Payment initiation failed');
-  //     }
-  //   } catch (error) {
-  //     console.error('Payment Error:', error);
-  //     return false;
-  //   }
-  // };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
