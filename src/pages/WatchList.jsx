@@ -69,8 +69,8 @@ const WatchList = () => {
       >
         {watches.map((watch) => (
           <Link
-            to={`/watch/${watch._id}`}  
-            key={watch._id}           
+            to={`/watch/${watch._id}`}   
+            key={watch._id}
             className="watch-card"
             style={{
               border: "none",
